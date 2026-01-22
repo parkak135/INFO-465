@@ -1,0 +1,75 @@
+/**
+ * stats.js
+ * This program reads integers from the user until they enter 'q',
+ * stores them in an array, and calculates the mean and median.
+ */
+
+const readline = require("readline");
+
+// Create readline interface for user input
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+let numbers = [];
+
+/**
+ * Prompt the user to enter integers until 'q' is entered
+ */
+function askForNumber() {
+  rl.question("Enter an integer (or 'q' to quit): ", (input) => {
+    // Exit condition
+    if (input.toLowerCase() === "q") {
+      if (numbers.length === 0) {
+        console.log("No numbers entered. Exiting program.");
+        rl.close();
+        return;
+      }
+
+      calculateStats(numbers);
+      rl.close();
+      return;
+    }
+
+    // Convert input to number
+    let value = Number(input);
+
+    // Error handling: check for invalid integer input
+    if (!Number.isInteger(value)) {
+      console.log("Invalid input. Please enter an integer.");
+    } else {
+      numbers.push(value);
+    }
+
+    askForNumber();
+  });
+}
+
+/**
+ * Calculate and display mean and median
+ */
+function calculateStats(arr) {
+  // Calculate mean
+  let sum = arr.reduce((total, num) => total + num, 0);
+  let mean = sum / arr.length;
+
+  // Calculate median
+  let sorted = [...arr].sort((a, b) => a - b);
+  let median;
+  let mid = Math.floor(sorted.length / 2);
+
+  if (sorted.length % 2 === 0) {
+    median = (sorted[mid - 1] + sorted[mid]) / 2;
+  } else {
+    median = sorted[mid];
+  }
+
+  console.log("\nResults:");
+  console.log("Numbers:", arr);
+  console.log("Mean:", mean);
+  console.log("Median:", median);
+}
+
+// Start program
+askForNumber();
