@@ -1,0 +1,81 @@
+//Andrew Park
+//INFO 465
+//Assignment 2
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+const numbers = [];
+
+
+function findProductCondition(nums) {
+  // We can speed lookups by using a Set of values in the list.
+  const values = new Set(nums);
+
+  // Check all pairs (a, b)
+  for (let i = 0; i < nums.length; i++) {
+    for (let j = 0; j < nums.length; j++) {
+      if (i === j) continue; // "any two" -> use two different entries
+      const a = nums[i];
+      const b = nums[j];
+      const product = a * b;
+
+      // Check if product exists in the set
+      if (values.has(product)) {
+        return { a, b, c: product };
+      }
+    }
+  }
+
+  return null;
+}
+
+function promptNext() {
+  rl.question("Enter an integer (or q to quit): ", (answer) => {
+    const trimmed = answer.trim();
+
+    // Quit condition (q or Q)
+    if (trimmed.toLowerCase() === "q") {
+      // Echo the integers back
+      if (numbers.length === 0) {
+        console.log("You entered no integers.");
+      } else {
+        console.log("You entered:", numbers.join(", "));
+      }
+
+      // Evaluate condition
+      const match = findProductCondition(numbers);
+
+      if (match) {
+        console.log(`Condition is met: ${match.a} x ${match.b} = ${match.c}`);
+      } else {
+        console.log("Condition was not met");
+      }
+
+      rl.close();
+      return;
+    }
+
+    // Validate integer input
+    const parsed = Number(trimmed);
+
+    if (!Number.isInteger(parsed)) {
+      console.log("Error: Please enter an integer or 'q' to quit.");
+      promptNext();
+      return;
+    }
+
+    // Valid integer: store and echo immediately
+    numbers.push(parsed);
+    console.log(`Echo: ${parsed}`);
+
+    promptNext();
+  });
+}
+
+// Start program
+console.log("Enter integers. Type 'q' (or 'Q') to quit.");
+promptNext();
